@@ -1,6 +1,9 @@
 import mongoose,{Schema} from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { contactSchema } from "./contact.model.js";
+
+
 const userSchema=new Schema({
     fullname:{
         type:String,
@@ -25,10 +28,9 @@ const userSchema=new Schema({
     pin:{
         type:Number
     },
-    contacts:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Contact"
-    }]
+    contacts:[
+        contactSchema
+    ]
 },{timestamps:true})
 
 userSchema.pre("save",async function(next){
@@ -63,5 +65,8 @@ userSchema.methods.generateRefreshToken=function(){
         expiresIn:process.env.REFRESH_TOKEN_EXPIRY
     })
 }
+
+
+
 
 export const User =mongoose.model("User",userSchema)

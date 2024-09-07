@@ -6,13 +6,13 @@ const contactSchema=new Schema({
         trim:true,
         index:true
     },
-    coverImage:{
-        type:String
-    },
+    // coverImage:{
+    //     type:String
+    // },
     phoneNumber:{
         type:String,
         required:[true,"Phone Number is required"]
     },
 },{timestamps:true})
 
-export const Contact =mongoose.model("Contact",contactSchema)
+export {contactSchema}

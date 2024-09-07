@@ -23,10 +23,12 @@ const registerUser=asyncHandler(async(req,res)=>{
         throw new ApiError(409,"User with phonenumber already existed")
     }
 
+    let contact=[]
     const user= await User.create({
         fullname,
         phoneNumber,
         password,
+        contact
     })
 
     const createdUser=await User.findById(user._id).select(
@@ -103,8 +105,21 @@ const loginUser=asyncHandler(async(req,res)=>{
 
 
 
+const addContacts=asyncHandler(async(req,res)=>{
+    
+    const {phoneNumber, fullname}=req.body;
+
+    const user = await User.findById(req.user?._id);
+
+    user.contacts.push({fullname,phoneNumber});
+
+    await user.save({validateBeforeSave:true})
+
+    return res.status(200).json(new ApiResponse(200,{},`${fullname} added to the contacts`))
+
+})
 
 
 
 
-export {registerUser,loginUser}
+export {registerUser,loginUser,addContacts}

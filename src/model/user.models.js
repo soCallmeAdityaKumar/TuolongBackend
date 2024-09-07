@@ -24,7 +24,11 @@ const userSchema=new Schema({
     },
     pin:{
         type:Number
-    }
+    },
+    contacts:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Contact"
+    }]
 },{timestamps:true})
 
 userSchema.pre("save",async function(next){

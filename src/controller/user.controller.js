@@ -107,16 +107,17 @@ const loginUser=asyncHandler(async(req,res)=>{
 
 const addContacts=asyncHandler(async(req,res)=>{
     
-    const {newphoneNumber, fullname}=req.body;
+    const {phoneNumber, fullname}=req.body;
 
     const user = await User.findById(req.user?._id);
 
-    const phoneExist = await User.find({contacts:{$elemMatch:{phoneNumber:newphoneNumber}}})
+    const phoneExist = await User.findOne({contacts:{$elemMatch:{phoneNumber:phoneNumber}}})
+
     if(phoneExist){
         throw new ApiError(409,"Phone number already existed")
-
     }
-    user.contacts.push({fullname,newphoneNumber});
+
+    user.contacts.push({fullname,phoneNumber});
 
     await user.save({validateBeforeSave:true})
 

@@ -126,6 +126,7 @@ const addContacts=asyncHandler(async(req,res)=>{
 })
 
 const getDetails=asyncHandler(async(req,res)=>{
+    
     const id=req.user?._id
     const user=await User.findById(id).select("-password -refreshToken");
 
@@ -133,7 +134,42 @@ const getDetails=asyncHandler(async(req,res)=>{
 
 })
 
+const deleteContact=asyncHandler(async(req,res)=>{
+    const {_phoneNumber}=req.body;
 
+    const id=req.user?._id
 
+    // const contact=await User.findById(id).updateOne(
+    //     { "contacts.phoneNumber": _phoneNumber }, 
+    //     { $pull: { contacts: { phoneNumber: _phoneNumber } } }
+    //   )
+    const contact=await User.findById(id).select("contacts").findOne({"contacts.phoneNumber":_phoneNumber})
+    // .find({contacts:{phoneNumber:_phoneNumber}})
+    // .deleteOne({phoneNumber:_phoneNumber})
 
-export {registerUser,loginUser,addContacts,getDetails}
+    // const newContact =await User.findById(id).select("contacts")
+
+    return res.status(200).json(new ApiResponse(200,contact,"Contact deleted"))
+
+})
+
+const loggedOutUser=asyncHandler(async(req,res)=>{
+    await User.findByIdAndUpdate(req.user._id,{
+        $unset:{
+            refreshToken:1
+        }
+    },{
+        new:true
+    })
+
+    const options={
+        httpOnly:true,
+        secure:true
+    }
+    return res.status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json( new ApiResponse(200,{},"User Logged Out"))
+})
+
+export {registerUser,loginUser,addContacts,getDetails,deleteContact,loggedOutUser}

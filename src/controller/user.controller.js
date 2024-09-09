@@ -125,7 +125,15 @@ const addContacts=asyncHandler(async(req,res)=>{
 
 })
 
+const getDetails=asyncHandler(async(req,res)=>{
+    const id=req.user?._id
+    const user=await User.findById(id).select("-password -refreshToken");
+
+    return res.status(200).json(new ApiResponse(200,user,"User fetched"))
+
+})
 
 
 
-export {registerUser,loginUser,addContacts}
+
+export {registerUser,loginUser,addContacts,getDetails}
